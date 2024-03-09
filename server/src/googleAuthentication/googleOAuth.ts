@@ -29,14 +29,15 @@ const googleLogin = async (req: Request, res: Response) => {
                 domain_id: student?.domain_id,
                 role: 'student'
             }, process.env.JWT_SECRET!, { expiresIn: '1h' });
-
             const options = {
                 expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
                 httpOnly: true,
+                secure: true
             };
             res.cookie("token", accessToken, options).status(200).json({
                 message: "Login successful",
-                student
+                student,
+                accessToken
             });
         }
         else {

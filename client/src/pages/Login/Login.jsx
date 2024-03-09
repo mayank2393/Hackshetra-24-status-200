@@ -94,10 +94,14 @@ const StudentLogin = ({ college }) => {
         const res = await axios.post(`${hostname}/api/login/student/v1/google`, { token: response.credential });
         console.log(res);
         localStorage.clear();
+        sessionStorage.clear();
         const { student } = res.data;
         for(const field in student){
             localStorage.setItem(field, student[field]);
         }
+        const authToken = res.data.accessToken;
+        console.log(res.accessToken);
+        sessionStorage.setItem('authToken', authToken);   
         navigate("/student", { state: { ...data } });
     }
 
@@ -112,10 +116,13 @@ const StudentLogin = ({ college }) => {
         const { data } = await axios.post(`${hostname}/api/login/student`, { domain_id, password, role });
         const { student } = data;
         localStorage.clear();
+        sessionStorage.clear();
         console.log(student);
         for(const key in student){
             localStorage.setItem(key, (student)[key]);
         }
+        const authToken = data.token;
+        sessionStorage.setItem('authToken', authToken);        
         navigate("/student", { state: { ...data } });
     }
 
@@ -131,7 +138,7 @@ const StudentLogin = ({ college }) => {
             >
                 Login
             </button>
-            {user ? <GoogleLogin onSuccess={responseMessage} onError={errorMessage} /> : <div id="google_login"><p>{user?.username}</p><p>{user?.email}</p></div>}
+            <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
             <a href="#" className="text-blue-200">Forgot Password?</a>
             {/* Havenot Signed Up Do sign up */}
             <p className="text-yellow-500">Don't have an account? <span className="text-blue-300 cursor-pointer hover:text-white hover:font-semibold" onClick={() => navigate("/signup", { state: { ...data } })} >Sign Up</span></p>
