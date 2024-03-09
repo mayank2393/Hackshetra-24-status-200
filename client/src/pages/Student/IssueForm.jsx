@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BsCamera2 } from "react-icons/bs";
 import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query';
-import { createStudentIssue } from '@/api/queries';
+import { createStudentIssue } from '../../api/queries';
 
 const RadioInput = (props) => (
     <label htmlFor={props.value} className='inline-flex items-center m-2'>
@@ -21,7 +21,7 @@ const TextInput = (props) => (
     />
 );
 
-const IssueForm = () => {
+const IssueForm = (props) => {
     const textInput = ['title', 'description', 'location'];
     const visibility = ['public', 'private'];
     const category = ['carpentry', 'electrician', 'plumber', 'laundry', 'mason', 'sweeper'];
@@ -32,6 +32,7 @@ const IssueForm = () => {
         onSuccess: () => {
             console.log(createIssue.data);
             queryClient.invalidateQueries({ queryKey : ['studentIssues']});
+            props.setViewIssues(true);
         },
     });
     const [issue, setIssue] = useState({
