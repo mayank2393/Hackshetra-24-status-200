@@ -9,12 +9,6 @@ import { Button } from "../../components/FormElements";
 
 
 
-// const Button = ({ name, handleOnClick }) => {
-//     return (
-//         <button onClick={handleOnClick} className="bg-[#00FFF5] text-slate-700 font-semibold rounded p-2 text-lg  transition-all shadow-[0_0_10px_#00FFF5] hover:shadow-none">{name}</button>
-//     )
-// }
-
 const StudentDash = () => {
     const [toggle, setToggle] = useState(true);
     function handleToggle() {
@@ -25,7 +19,7 @@ const StudentDash = () => {
         queryKey: ['studentIssues'],
         queryFn: getStudentIssues
     });
-    const issues = issueQuery.data;
+    const issues = issueQuery?.data;
     const visible = "max-sm:absolute max-sm:top-0 max-sm:left-0 max-sm:min-w-[100svw] max-sm:min-h-[100svh] max-sm:z-50 customSlideLeft"
     const hidden = "max-sm:hidden"
     const [viewIssues, setViewIssues] = useState(false)
@@ -56,7 +50,7 @@ const StudentDash = () => {
                 </div>
             </div>
             <div className="post_issue min-h-[94svh] min-w-[73svw] bg-[#222831] rounded-md flex max-sm:flex-col justify-between max-sm:justify-evenly items-center max-sm:max-w-[100svw] overflow-hidden">
-                {viewIssues ? issueQuery.isLoading ? <h1>Fetching Issues</h1> : <ViewIssues issues={issues} /> : <IssueForm />}
+                {viewIssues ? issueQuery.isLoading ? <h1>Fetching Issues</h1> : <ViewIssues issues={issues} /> : <IssueForm setViewIssues={setViewIssues} />}
                 
             </div>
         </div>
