@@ -27,4 +27,4 @@ const getStudentIssues = async () => {
 
 
 
-export { getStudentIssues, createStudentIssue };
+export { getStudentIssues, createStudentIssue }; 

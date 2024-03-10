@@ -155,6 +155,7 @@ export const login_student = async (req: Request, res: Response) => {
 };
 
 export const createIssue = async (req: Request, res: Response) => {
+  console.log(req.body)
   try {
     const { category, location, title, is_public, description } = req.body;
     const student_id = (req as AuthenticatedRequest).user.domain_id;
