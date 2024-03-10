@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 
 const HomePage = () => {
     return (
+        <>
         <div className="bg-black h-screen bg-[url('https://gifdb.com/images/high/light-trails-wave-background-r4tz04b0l8kqi6do.gif')] bg-cover">
             <nav className="bg-gray-800">
                 <ul className="flex text-lg min-h-[5svh] justify-center font-semibold">
@@ -13,6 +14,14 @@ const HomePage = () => {
             </nav>
             <h1 className="text-center text-5xl mt-[40svh] font-bold text-white">Home Page is Under Construction</h1>
         </div>
+        <div className=" text-white">
+            <h1 className="text-white">Online Hostel Management System</h1>
+            <p className="text-white">All-In-One Hostel Property Management System(PMS) To Manage Your Hostel In The Cloud</p>
+        </div>
+        <div>
+            <h1 className="text-white">Modernize Hostel Management</h1>
+        </div>
+        </>
     )
 }
 export default HomePage
