@@ -23,6 +23,9 @@ model Student {
   profile_picture String?
   issue_list      Issue[]
   notification    Notification[]
+  rebate          Rebate[]
+  payment         Payment[]
+  mess_due String @default("0")
   role            Roles          @default(student)
 }
 
@@ -92,6 +95,25 @@ model College_admin {
   Notification Notification[]
   role         Roles          @default(college_admin)
 }
+
+model Rebate{
+  rebate_id Int @id @default(autoincrement())
+  from DateTime @db.Date @default(now())
+  to DateTime @db.Date 
+  reason String
+  student_id String
+  student Student @relation(fields: [student_id], references: [domain_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Payment{
+  razorpay_payment_id String @id
+  student_id String
+  razorpay_subscription_id String
+  razorpay_signature String
+  payment_date DateTime @default(now())
+  student Student @relation(fields: [student_id], references: [domain_id], onDelete: Cascade, onUpdate: Cascade)
+}
+
 
 enum Roles {
   student
