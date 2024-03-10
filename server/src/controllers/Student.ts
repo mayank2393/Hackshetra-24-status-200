@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { prisma } from "../index";
+import { instance, prisma } from "../index";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import AuthenticatedRequest from "../interfaces/authenticatedRequest";
 import MulterFileRequest from "../interfaces/multerFile";
 import { handleUpload } from "../utilities/cloudinaryManager";
+import crypto from "crypto";
 
 export const signup_student = async (req: Request, res: Response) => {
   try {
@@ -371,11 +372,83 @@ export const getMessRebate = async (req: Request, res: Response) => {
   }
 };
 
-export const payBill = async (req: Request, res: Response) => {
+export const initiateBillpayment = async (req: Request, res: Response) => {
   try {
     const { domain_id } = (req as AuthenticatedRequest).user;
     const { role } = (req as AuthenticatedRequest).user;
+    const {amount} = req.body;
+
+    if(!domain_id){
+      return res.status(400).json({
+        success: false,
+        message: "Invalid access to this route. Please sign in as a student.",
+      });
+    }
+    
+    if (role !== "student") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid access to this route. Please sign in as a student.",
+      });
+    }
+
+    const options = {
+      amount: Number(amount * 100),
+      currency: "INR",
+      receipt: "order_rcptid_11",
+    }
+
+    const order = await instance.orders.create(options);
+    console.log(order);
+
+    return res.status(200).json({
+      success: true,
+      message: "Bill payment initiated",
+      order,
+    });
+
   } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
+export const completePayment = async (req: Request, res: Response) => {
+  try {
+    const {razorpay_order_id,razorpay_payment_id,razorpay_signature} = req.body;
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+      const expectedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+        .update(body.toString())
+        .digest("hex");
+
+      const isAuthentic = expectedSignature === razorpay_signature;
+
+      if(isAuthentic){
+        await prisma.payment.create({
+          data:{
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            student : {
+              connect : {
+                domain_id : (req as AuthenticatedRequest).user.domain_id
+              }
+            }
+          }
+        });
+      }
+      else{
+        return res.status(400).json({
+          success: false,
+          message: "Payment verification failed",
+        });
+      }
+  } catch ( error: any) {
     return res.status(500).json({
       success: false,
       message: "Something went wrong",

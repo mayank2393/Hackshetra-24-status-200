@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import Razorpay from "razorpay";
 import  RootRouter  from "./routes";
 
 const prisma = new PrismaClient();
@@ -17,6 +18,11 @@ app.use(cors({
 }));
 
 app.use('/api',RootRouter);
+
+export const instance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID!,
+  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+});
 
 app.get("/", async (req: Request, res: Response)=>{
     res.json("Express server");

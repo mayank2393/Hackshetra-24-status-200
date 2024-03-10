@@ -108,7 +108,7 @@ model Rebate{
 model Payment{
   razorpay_payment_id String @id
   student_id String
-  razorpay_subscription_id String
+  razorpay_order_id String
   razorpay_signature String
   payment_date DateTime @default(now())
   student Student @relation(fields: [student_id], references: [domain_id], onDelete: Cascade, onUpdate: Cascade)
