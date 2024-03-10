@@ -155,7 +155,7 @@ export const login_student = async (req: Request, res: Response) => {
 };
 
 export const createIssue = async (req: Request, res: Response) => {
-  console.log(req.body)
+  console.log(req.body);
   try {
     const { category, location, title, is_public, description } = req.body;
     const student_id = (req as AuthenticatedRequest).user.domain_id;
@@ -264,7 +264,7 @@ export const getAllIssues = async (req: Request, res: Response) => {
 export const edit_profile = async (req: Request, res: Response) => {
   try {
     const { domain_id } = (req as AuthenticatedRequest).user;
-  } catch (error:any) {
+  } catch (error: any) {
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
@@ -280,10 +280,16 @@ export const fileMessRebate = async (req: Request, res: Response) => {
     const student_id = (req as AuthenticatedRequest).user.domain_id;
     const { role } = (req as AuthenticatedRequest).user;
 
-    if (role !== "student") {
+    if (role != "student") {
       return res.status(400).json({
         success: false,
         message: "Invalid access to this route. Please sign in as a student.",
+      });
+    }
+    if (!student_id) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid access to this route. Please sign in as a student.",
       });
     }
     if (!to || !reason) {
@@ -292,18 +298,13 @@ export const fileMessRebate = async (req: Request, res: Response) => {
         error: "Please fill all fields",
       });
     }
-
-    if (!student_id) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid access to this route. Please sign in as a student.",
-      });
-    }
+    const formattedFrom = new Date(from);
+    const formattedTo = new Date(to);
 
     const messRebate = await prisma.rebate.create({
       data: {
-        from,
-        to,
+        from: formattedFrom,
+        to: formattedTo,
         reason,
         student: {
           connect: { domain_id: student_id },
@@ -316,7 +317,8 @@ export const fileMessRebate = async (req: Request, res: Response) => {
       message: "Mess Rebate filed successfully",
       messRebate,
     });
-  } catch (error:any) {
+  } catch (error: any) {
+    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
@@ -369,15 +371,14 @@ export const getMessRebate = async (req: Request, res: Response) => {
   }
 };
 
-
 export const payBill = async (req: Request, res: Response) => {
-    try {
-        const { domain_id } = (req as AuthenticatedRequest).user;
-        const { role } = (req as AuthenticatedRequest).user;
-    } catch (error:any) {
-        return res.status(500).json({
-            success: false,
-            message: "Something went wrong",
-        });
-    }
-} 
+  try {
+    const { domain_id } = (req as AuthenticatedRequest).user;
+    const { role } = (req as AuthenticatedRequest).user;
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};

@@ -404,7 +404,7 @@ export const updateBill = async (req: Request, res: Response) => {
         domain_id: student_id,
       },
       data: {
-        mess_due: amount.toString(),
+        mess_due: amount,
       },
     });
 
